@@ -1,0 +1,130 @@
+spring:
+  application:
+    name: gateway-service
+
+  consul:
+    host: localhost
+    port: 8500
+    config:
+      enabled: false
+
+  cloud:
+    loadbalancer:
+      health-check:
+        enabled: true # Ensure LoadBalancer is using Consul's health check
+    consul:
+      discovery:
+        enabled: true
+    gateway:
+      enabled: true
+      discovery:
+        locator:
+          enabled: true
+      httpclient:
+        enabled: true
+      routes:
+        - id: madis-paymentgateway-service
+          uri: lb://madis-paymentgateway-service
+          predicates:
+            - Path=/hub2/**
+          filters: []
+        - id: madis-facture-service
+          uri: lb://madis-facture-service
+          predicates:
+            - Path=/facture/**
+          filters: []
+        - id: madis-digitalcard-service
+          uri: lb://madis-digitalcard-service
+          predicates:
+            - Path=/card/**
+          filters: []
+        - id: madis-ocr-service
+          uri: lb://madis-ocr-service
+          predicates:
+            - Path=/ocr/**
+          filters: []
+        - id: madis-useraccount-service
+          uri: lb://madis-useraccount-service
+          predicates:
+            - Path=/madis/**
+          filters: []
+
+          # Route for aggregating OpenAPI documentation for FActure service
+        - id: facture-openapi
+          uri: lb://madis-facture-service
+          predicates:
+            - Path=/v3/api-docs/facture/**
+          filters:
+            - RewritePath=/v3/api-docs/facture/(?<path>.*), /v3/api-docs/facture/${path}
+
+          # Route for aggregating OpenAPI documentation for Card service
+        - id: card-openapi
+          uri: lb://madis-digitalcard-service
+          predicates:
+            - Path=/v3/api-docs/card/**
+          filters:
+            - RewritePath=/v3/api-docs/card/(?<path>.*), /v3/api-docs/card/${path}
+
+          # Route for aggregating OpenAPI documentation for Payment service
+        - id: payment-openapi
+          uri: lb://madis-paymentgateway-service
+          predicates:
+            - Path=/v3/api-docs/hub2/**
+          filters:
+            - RewritePath=/v3/api-docs/hub2/(?<path>.*), /v3/api-docs/hub2/${path}
+
+          # Route for aggregating OpenAPI documentation for OCR service
+        - id: ocr-openapi
+          uri: lb://madis-ocr-service
+          predicates:
+            - Path=/v3/api-docs/ocr/**
+          filters:
+            - RewritePath=/v3/api-docs/ocr/(?<path>.*), /v3/api-docs/ocr/${path}
+
+            # Route for aggregating OpenAPI documentation for UserAccount service
+        - id: madis-openapi
+          uri: lb://madis-useraccount-service
+          predicates:
+            - Path=/v3/api-docs/madis/**
+          filters:
+            - RewritePath=/v3/api-docs/madis/(?<path>.*), /v3/api-docs/madis/${path}
+
+springdoc:
+  api-docs:
+    version: OPENAPI_3_0
+    path: /v3/api-docs # Gateway exposes its OpenAPI docs here
+  swagger-ui:
+    path: /swagger-ui.html # Gateway exposes Swagger UI here
+    urls:
+      - name: payment
+        url: /madis-paymentgateway-service/v3/api-docs
+      - name: card
+        url: /madis-digitalcard-service/v3/api-docs/v1
+      - name: facture
+        url: /madis-facture-service/v3/api-docs
+      - name: ocr
+        url: /madis-ocr-service/v3/api-docs
+      - name: madis
+        url: /madis-useraccount-service/v3/api-docs
+
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 5000
+        read-timeout: 5000
+  discovery:
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    com.madisfinance.walletgateway: ERROR
+    org.springframework.web: INFO
+    org.springframework.web.HttpLogging: INFO
+
+info:
+  app:
+    name: ${spring.application.name}
+server:
+  port: ${PORT:8090}
