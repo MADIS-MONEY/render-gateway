@@ -3,7 +3,7 @@ spring:
     name: gateway-service
 
   consul:
-    host: localhost
+    host: ${HOST:localhost}
     port: 8500
     config:
       enabled: false
