@@ -2,20 +2,16 @@ spring:
   application:
     name: gateway-service
 
-  consul:
-    host: ${HOST:localhost}
-    port: ${CONSUL_PORT:8500}
-    config:
-      enabled: false
-
   cloud:
     loadbalancer:
       health-check:
         enabled: true # Ensure LoadBalancer is using Consul's health check
     consul:
       enabled: true
-      host: ${CONSUL_HOST:localhost}
+      host: ${CONSUL_HOST:render-consul.onrender.com}
       port: ${CONSUL_PORT:8500}
+      config:
+        enabled: true
       discovery:
         enabled: true
         service-name: gateway-service
