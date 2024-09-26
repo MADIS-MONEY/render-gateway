@@ -18,7 +18,7 @@ WORKDIR /opt
 
 # Expose the application port
 ENV PORT 8090
-EXPOSE 8090 8500 8300 8761
+EXPOSE 8090
 
 # Copy the built JAR file from the build stage
 COPY --from=build /app/target/*.jar /opt/madisgateway.jar
