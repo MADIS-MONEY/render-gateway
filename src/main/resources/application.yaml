@@ -8,8 +8,9 @@ spring:
         enabled: true # Ensure LoadBalancer is using Consul's health check
     consul:
       enabled: true
-      host: ${CONSUL_HOST:render-consul.onrender.com}
-      port: ${CONSUL_PORT:8500}
+      uri: ${CONSUL_HOST:https://render-consul.onrender.com}
+      #host: ${CONSUL_HOST:216.24.57.4}
+      #port: ${CONSUL_PORT:8500}
       config:
         enabled: true
       discovery:
