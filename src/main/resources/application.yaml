@@ -6,10 +6,14 @@ spring:
       service-url:
       # Replace with the address of your Eureka server
         defaultZone: ${EUREKA_SERVER:https://render-ereuka.onrender.com}
+      register-with-eureka: true
+      fetch-registry: true
     instance:
-      prefer-ip-address: true    # Use the IP address of the service for registration
-      hostname: https://render-gateway.onrender.com  # Use the public hostname of your service 
-      instance-id: ${spring.application.name}:${server.port}  # Unique ID for this service instance
+      prefer-ip-address: true
+      lease-renewal-interval-in-seconds: 5
+      lease-expiration-duration-in-seconds: 30
+      metadata-map:
+        instanceId: ${spring.application.name}:${server.port}
   cloud:
     loadbalancer:
       health-check:
