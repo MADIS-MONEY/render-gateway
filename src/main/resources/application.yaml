@@ -8,7 +8,7 @@ spring:
         defaultZone: ${EUREKA_SERVER:https://render-ereuka.onrender.com}
     instance:
       prefer-ip-address: true    # Use the IP address of the service for registration
-      hostname: render-gateway.onrender.com  # Use the public hostname of your service 
+      hostname: https://render-gateway.onrender.com  # Use the public hostname of your service 
       instance-id: ${spring.application.name}:${server.port}  # Unique ID for this service instance
   cloud:
     loadbalancer:
